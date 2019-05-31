@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 
 public class AddNoteActivity extends AppCompatActivity {
 
+    public static final String EXTRA_ID = "com.example.room_livedata_mvvm.EXTRA_ID";
     public static final String EXTRA_TITLE = "com.example.room_livedata_mvvm.EXTRA_TITLE";
     public static final String EXTRA_DESCRIPTION = "com.example.room_livedata_mvvm.EXTRA_DESCRIPTION";
     public static final String EXTRA_PRIORITY = "com.example.room_livedata_mvvm.EXTRA_PRIORITY";
@@ -37,6 +38,16 @@ public class AddNoteActivity extends AppCompatActivity {
         numberPicker.setMaxValue(10);
 
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_black_24dp);
+
+        Intent intent = getIntent();
+
+        if (intent.hasExtra(EXTRA_ID)) {
+            setTitle("Edit note");
+            editTextTitle.setText(intent.getStringExtra(EXTRA_TITLE));
+            editTextDescription.setText(intent.getStringExtra(EXTRA_DESCRIPTION));
+            numberPicker.setValue(intent.getIntExtra(EXTRA_PRIORITY, 1));
+        }
+
         setTitle("Add Note");
     }
 
@@ -64,7 +75,9 @@ public class AddNoteActivity extends AppCompatActivity {
         int priority = numberPicker.getValue();
 
         if (title.trim().isEmpty() || description.trim().isEmpty()) {
-            Toast.makeText(this, "Please insert a title and description", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,
+                    "Please insert a title and description",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -72,6 +85,12 @@ public class AddNoteActivity extends AppCompatActivity {
         data.putExtra(EXTRA_TITLE, title);
         data.putExtra(EXTRA_DESCRIPTION, description);
         data.putExtra(EXTRA_PRIORITY, priority);
+
+        int id = getIntent().getIntExtra(EXTRA_ID, -1);
+
+        if (id != -1) {
+            data.putExtra(EXTRA_ID, id);
+        }
 
         setResult(RESULT_OK, data);
         finish();
